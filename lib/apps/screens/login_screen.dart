@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:iot_project/apps/screens/register_screen.dart';
 import 'package:iot_project/apps/utilities/constants.dart';
+import 'package:iot_project/apps/utilities/functions.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -9,6 +10,14 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+
+  final mailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final String url = "sapu.hopto.org:20080";
+  final String unencodedPath = "/iotProject/login.php";
+  final Map<String, String> header = {
+    'Content-Type': 'application/x-www-form-urlencoded'
+  };
 
   Widget _buildEmailTF() {
     return Column(
@@ -24,6 +33,7 @@ class _LoginScreenState extends State<LoginScreen> {
           decoration: kBoxDecorationStyle,
           height: 60.0,
           child: TextField(
+            controller: mailController,
             keyboardType: TextInputType.emailAddress,
             style: TextStyle(
               color: Colors.white,
@@ -59,6 +69,7 @@ class _LoginScreenState extends State<LoginScreen> {
           decoration: kBoxDecorationStyle,
           height: 60.0,
           child: TextField(
+            controller: passwordController,
             obscureText: true,
             style: TextStyle(
               color: Colors.white,
@@ -86,7 +97,18 @@ class _LoginScreenState extends State<LoginScreen> {
       width: double.infinity,
       child: RaisedButton(
         elevation: 5.0,
-        onPressed: () => print('Login Button Pressed'),
+        onPressed: () {
+          //TODO: onPress
+          print('Login Button Pressed');
+          String password = getEncryptedString(passwordController.text);
+          String mail = getEncryptedString(mailController.text);
+
+          final Map<String, String> requestBody = {
+            'mail': mail,
+            'password': password
+          };
+          makePostRequest(context, url, unencodedPath, header, requestBody);
+        },
         padding: EdgeInsets.all(15.0),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30.0),

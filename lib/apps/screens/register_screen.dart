@@ -11,13 +11,13 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   final String url = "sapu.hopto.org:20080";
   final String unencodedPath = "/iotProject/register.php";
-  final Map<String, String> headers = {
+  final Map<String, String> header = {
     'Content-Type': 'application/x-www-form-urlencoded'
   };
 
   final usernameController = TextEditingController();
   final mailController = TextEditingController();
-  final passwordeController = TextEditingController();
+  final passwordController = TextEditingController();
 
   Widget _buildUsernameTF() {
     return Column(
@@ -105,7 +105,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           decoration: kBoxDecorationStyle,
           height: 60.0,
           child: TextField(
-            controller: passwordeController,
+            controller: passwordController,
             obscureText: true,
             style: TextStyle(
               color: Colors.white,
@@ -134,17 +134,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
       child: RaisedButton(
         elevation: 5.0,
         onPressed: () {
+          //TODO: onPress
           print('Register Button Pressed');
-          String username = usernameController.text;
-          String password = passwordeController.text;
-          String mail = mailController.text;
-          //TODO: Encrypt pwd
+          String username = getEncryptedString(usernameController.text);
+          String password = getEncryptedString(passwordController.text);
+          String mail = getEncryptedString(mailController.text);
+
           final Map<String, String> body = {
             'username': username,
             'password': password,
             'mail': mail
           };
-          makePostRequestDialog(context, url, unencodedPath, headers, body);
+          makePostRequest(context, url, unencodedPath, header, body);
         },
         padding: EdgeInsets.all(15.0),
         shape: RoundedRectangleBorder(
