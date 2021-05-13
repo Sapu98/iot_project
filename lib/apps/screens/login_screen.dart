@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:iot_project/apps/components/user.dart';
 import 'package:iot_project/apps/screens/register_screen.dart';
 import 'package:iot_project/apps/utilities/constants.dart';
 import 'package:iot_project/apps/utilities/functions.dart';
+import 'package:iot_project/apps/utilities/user_data.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -97,7 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
       width: double.infinity,
       child: RaisedButton(
         elevation: 5.0,
-        onPressed: () {
+        onPressed: () async {
           //TODO: onPress
           print('Login Button Pressed');
           String password = getEncryptedString(passwordController.text);
@@ -107,7 +109,16 @@ class _LoginScreenState extends State<LoginScreen> {
             'mail': mail,
             'password': password
           };
-          makePostRequest(context, url, unencodedPath, header, requestBody);
+          String response = await makePostRequest(url, unencodedPath, header, requestBody);
+          showWindowDialog(response, context);
+
+          String username = response.substring(response.lastIndexOf("***username:")+12,response.lastIndexOf(" id:"));
+          int id = int.parse(response.substring(response.lastIndexOf(" id:")+4,response.lastIndexOf(" activated:")));
+          bool activated = response.substring(response.lastIndexOf(" activated:")+11) == "true"; //in dart non esiste un modo per passare da stringa a boolean
+
+          UserData.user = new User(id, activated, username, mail);
+          //si potrebbe fare in un'unica richiesta, passando in un formato json
+          UserData.activities = getActivities(UserData.user);
         },
         padding: EdgeInsets.all(15.0),
         shape: RoundedRectangleBorder(

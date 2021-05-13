@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:iot_project/apps/utilities/constants.dart';
 import 'package:iot_project/apps/utilities/functions.dart';
 
+
 class RegisterScreen extends StatefulWidget {
   @override
   _RegisterScreenState createState() => _RegisterScreenState();
@@ -133,7 +134,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       width: double.infinity,
       child: RaisedButton(
         elevation: 5.0,
-        onPressed: () {
+        onPressed: () async {
           //TODO: onPress
           print('Register Button Pressed');
           String username = getEncryptedString(usernameController.text);
@@ -145,7 +146,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
             'password': password,
             'mail': mail
           };
-          makePostRequest(context, url, unencodedPath, header, body);
+          String response = await makePostRequest(url, unencodedPath, header, body);
+          showWindowDialog(response, context);
         },
         padding: EdgeInsets.all(15.0),
         shape: RoundedRectangleBorder(
