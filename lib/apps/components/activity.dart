@@ -1,55 +1,66 @@
 
 import 'package:latlong/latlong.dart';
 
-class Activity{
-  String name;
-  DateTime dateTime;
-  LatLng start;
-  LatLng end;
-  List<LatLng> points;
+import 'coordPoint.dart';
 
-  Activity(String name, DateTime dateTime, List<LatLng> points){
-    this.name = name;
-    this.dateTime = dateTime;
-    this.start = points[0];
-    this.end = points[points.length-1];
-    this.points = points;
+class Activity{
+  String _name;
+  List<CoordPoint> _points;
+
+  Activity(String name, List<CoordPoint> points){
+    this._name = name;
+    this._points = points;
   }
 
   String getName(){
-    return this.name;
+    return this._name;
   }
 
-  DateTime getDateTime(){
-    return this.dateTime;
+  DateTime getBeginTime(){
+    return this._points[0].getDateTime();
   }
 
-  LatLng getStart(){
-    return this.start;
+  DateTime getEndTime(){
+    return this._points[_points.length-1].getDateTime();
   }
 
-  LatLng getEnd(){
-    return this.end;
+  CoordPoint getFirstPos(){
+    return this._points[0];
   }
 
-  List<LatLng> getPoints(){
-    return this.points;
+  CoordPoint getLastPos(){
+    if(this._points.length == 0){
+      return new CoordPoint(0, 0, 0, 0, null);
+    }
+    return this._points[_points.length-1];
   }
 
-  getMiddlePoint(){
-    return this.points[points.length~/2];
+  List<CoordPoint> getCoordPoints(){
+    return this._points;
+  }
+
+  List<LatLng> getPointsLatLng(){
+    //modo stranissimo per creare una lista ma okay dart...
+    List<LatLng> list = [
+    for(CoordPoint point in _points)
+      point.toLatLng()
+    ];
+    return list;
+  }
+
+  CoordPoint getMiddlePoint(){
+    if(_points.isEmpty){
+      return new CoordPoint(0, 0, 0, 0, new DateTime(0,0,0,0,0,0,0,0));
+    }
+    return this._points[_points.length~/2];
   }
 
   void setName(String name){
-    this.name = name;
+    this._name = name;
   }
 
-  void setDateTime(DateTime dateTime){
-    this.dateTime = dateTime;
-  }
-
-  void addPoint(LatLng point){
-    this.points.add(point);
+  void addPoint(CoordPoint point){
+    this._points.add(point);
   }
 
 

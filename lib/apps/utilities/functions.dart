@@ -3,6 +3,7 @@ import 'package:encrypt/encrypt.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:iot_project/apps/components/activity.dart';
+import 'package:iot_project/apps/components/coordPoint.dart';
 import 'package:iot_project/apps/components/user.dart';
 import 'package:iot_project/apps/screens/homepage_screen.dart';
 import 'package:geolocator/geolocator.dart';
@@ -49,25 +50,39 @@ void showWindowDialog(String message, BuildContext context) {
       });
 }
 
-Future<Position> determinePosition() async {
+Future<Position> _determinePosition(BuildContext context) async {
   bool serviceEnabled;
   LocationPermission permission;
   serviceEnabled = await Geolocator.isLocationServiceEnabled();
   if (!serviceEnabled) {
+    showWindowDialog('Location services are disabled.', context);
     return Future.error('Location services are disabled.');
   }
   permission = await Geolocator.checkPermission();
   if (permission == LocationPermission.denied) {
     permission = await Geolocator.requestPermission();
     if (permission == LocationPermission.denied) {
+      showWindowDialog('Location permissions are denied', context);
       return Future.error('Location permissions are denied');
     }
   }
   if (permission == LocationPermission.deniedForever) {
-    return Future.error(
-        'Location permissions are permanently denied, we cannot request permissions.');
+    showWindowDialog('Location permissions are permanently denied, we cannot request permissions.', context);
+    return Future.error('Location permissions are permanently denied, we cannot request permissions.');
   }
   return await Geolocator.getCurrentPosition();
+}
+
+Future<CoordPoint> getCoordPoint(BuildContext context) async {
+  Position position = (await _determinePosition(context));
+  double longitude = position.longitude;
+  double latitude = position.latitude;
+  double altitude = position.altitude;
+  double speed = position.speed;
+  DateTime dateTime = position.timestamp;
+
+  CoordPoint coordPoint = new CoordPoint(latitude, longitude, altitude, speed, dateTime);
+  return coordPoint;
 }
 
 List<Activity> getActivities(User user){
