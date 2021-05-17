@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:iot_project/apps/components/activity.dart';
+import 'package:iot_project/apps/components/coordPoint.dart';
 import 'package:iot_project/apps/components/user.dart';
 import 'package:iot_project/apps/screens/register_screen.dart';
 import 'package:iot_project/apps/utilities/constants.dart';
@@ -111,14 +113,14 @@ class _LoginScreenState extends State<LoginScreen> {
           };
           String response = await makePostRequest(url, unencodedPath, header, requestBody);
           showWindowDialog(response, context);
-
+          //TODO: metodo per prendere i dati da cambiare...
           String username = response.substring(response.lastIndexOf("***username:")+12,response.lastIndexOf(" id:"));
           int id = int.parse(response.substring(response.lastIndexOf(" id:")+4,response.lastIndexOf(" activated:")));
           bool activated = response.substring(response.lastIndexOf(" activated:")+11) == "true"; //in dart non esiste un modo per passare da stringa a boolean
 
           UserData.user = new User(id, activated, username, mail);
           //si potrebbe fare in un'unica richiesta, passando in un formato json
-          UserData.activities = getActivities(UserData.user);
+          UserData.activities = await getUserActivitiesSQL();
         },
         padding: EdgeInsets.all(15.0),
         shape: RoundedRectangleBorder(
@@ -224,5 +226,26 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
+  }
+  Future<List<Activity>> getUserActivitiesSQL() async{
+    final Map<String, String> body = {
+      'user_id': getEncryptedString(UserData.user.getId().toString()),
+    };
+    String result = await makePostRequest(url, "/iotProject/getActivity.php", header, body);
+
+    List<Activity> activities = [];
+
+    List<String> allRows = result.split("#");
+    allRows.removeAt(0);
+
+    for(String row in allRows) {
+      List<String> splittedRow = row.split("*");
+      String activityName = splittedRow[1];
+      int activityId = int.parse(splittedRow[0]);
+      Activity activity = new Activity(activityName, <CoordPoint>[]);
+      activity.setId(activityId);
+      activities.add(activity);
+    }
+    return activities;
   }
 }

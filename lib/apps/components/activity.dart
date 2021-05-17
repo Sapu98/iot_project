@@ -5,6 +5,7 @@ import 'coordPoint.dart';
 
 class Activity{
   String _name;
+  int _id = -1;
   List<CoordPoint> _points;
 
   Activity(String name, List<CoordPoint> points){
@@ -16,11 +17,11 @@ class Activity{
     return this._name;
   }
 
-  DateTime getBeginTime(){
+  String getBeginTime(){
     return this._points[0].getDateTime();
   }
 
-  DateTime getEndTime(){
+  String getEndTime(){
     return this._points[_points.length-1].getDateTime();
   }
 
@@ -47,12 +48,23 @@ class Activity{
     ];
     return list;
   }
+  int getId(){
+    return this._id;
+  }
 
   CoordPoint getMiddlePoint(){
     if(_points.isEmpty){
-      return new CoordPoint(0, 0, 0, 0, new DateTime(0,0,0,0,0,0,0,0));
+      return new CoordPoint(0, 0, 0, 0, "0000/00/00 00:00:00");
     }
     return this._points[_points.length~/2];
+  }
+
+  void setCoordPoints(List<CoordPoint> coordPoints){
+    this._points = coordPoints;
+  }
+
+  void setId(int id){
+    this._id = id;
   }
 
   void setName(String name){

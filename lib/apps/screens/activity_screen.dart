@@ -5,6 +5,7 @@ import 'package:iot_project/apps/components/activity.dart';
 class ActivityScreen extends StatelessWidget {
 
   Activity activity;
+  MapController _mapController = MapController();
 
   ActivityScreen(Activity activity){
     this.activity = activity;
@@ -23,23 +24,47 @@ class ActivityScreen extends StatelessWidget {
               child: Text(activity.getName()),
             ),
             Flexible(
-              child: FlutterMap(
-                options: MapOptions(
-                  center: activity.getMiddlePoint().toLatLng(),
-                  zoom: 15.0,
-                ),
-                layers: [
-                  TileLayerOptions(
-                      urlTemplate:
-                      'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                      subdomains: ['a', 'b', 'c']),
-                  PolylineLayerOptions(
-                    polylines: [
-                      Polyline(
-                          points: activity.getPointsLatLng(),
-                          strokeWidth: 4.0,
-                          color: Colors.red),
+              child: Stack(
+                fit: StackFit.loose,
+                children: <Widget>[
+                  FlutterMap(
+                    mapController: _mapController,
+                    options: MapOptions(
+                      interactiveFlags: InteractiveFlag.pinchZoom |
+                      InteractiveFlag.drag |
+                      InteractiveFlag.doubleTapZoom,
+                      zoom: 15.0,
+                    ),
+                    layers: [
+                      TileLayerOptions(
+                          urlTemplate:
+                          'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                          subdomains: ['a', 'b', 'c']),
+                      PolylineLayerOptions(
+                        polylines: [
+                          Polyline(
+                              points: activity.getPointsLatLng(),
+                              strokeWidth: 4.0,
+                              color: Colors.red),
+                        ],
+                      ),
                     ],
+                  ),
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 10.0),
+                      child: FloatingActionButton(
+                        heroTag: null,
+                        onPressed: () {
+                          focusCurrentPosition();
+                        },
+                        child: Icon(Icons.gps_fixed),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 2.0, bottom: 2.0),
                   ),
                 ],
               ),
@@ -48,5 +73,9 @@ class ActivityScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void focusCurrentPosition() {
+    _mapController.move(activity.getMiddlePoint().toLatLng(), 15);
   }
 }

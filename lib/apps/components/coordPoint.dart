@@ -7,9 +7,9 @@ class CoordPoint{
   double _longitude;
   double _altitude;
   double _speed;
-  DateTime _dateTime;
+  String _dateTime;
 
-  CoordPoint(double latitude, double longitude, double altitude, double speed, DateTime dateTime){
+  CoordPoint(double latitude, double longitude, double altitude, double speed, String dateTime){
     this._latitude = latitude;
     this._longitude = longitude;
     this._altitude = altitude;
@@ -32,8 +32,8 @@ class CoordPoint{
     return this._speed;
   }
 
-  DateTime getDateTime(){
-    return this._dateTime;
+  String getDateTime(){
+    return _dateTime;
   }
 
   LatLng toLatLng(){
@@ -45,6 +45,6 @@ class CoordPoint{
         + " Longitude:"+ _longitude.toString()
     + " Altitude:"+ _altitude.toString()
     + " Speed:"+_speed.toString()
-    + " DateTime:"+_dateTime.toString();
+    + " DateTime:"+ _dateTime;
   }
 }

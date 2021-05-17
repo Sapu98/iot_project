@@ -31,24 +31,19 @@ class _HomePageScreenState extends State<HomePageScreen> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text("Welcome, " + UserData.user.username),
+        title: Text("Welcome, " + UserData.user.getUsername()),
       ),
       body: SingleChildScrollView(
           child: Column(
         children: [
-          SizedBox(
-            height: 2,
-          ),
-          ActivityRow(activityInstance: ActivityScreen(getActivityTest())),
+          for(Activity activity in UserData.activities)
+          ActivityRow(activity: activity, activityInstance: ActivityScreen(activity)),
         ],
       )),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => RegisterActivityScreen()),
-          );
+          Navigator.push(context, MaterialPageRoute(builder: (context) => RegisterActivityScreen()),);
         },
       ),
     );

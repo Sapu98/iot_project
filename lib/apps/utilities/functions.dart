@@ -2,11 +2,13 @@ import 'package:encrypt/encrypt.dart' as encrypt;
 import 'package:encrypt/encrypt.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:iot_project/apps/components/activity.dart';
 import 'package:iot_project/apps/components/coordPoint.dart';
 import 'package:iot_project/apps/components/user.dart';
 import 'package:iot_project/apps/screens/homepage_screen.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:iot_project/apps/utilities/user_data.dart';
 
 
 final key = encrypt.Key.fromUtf8('MySecretKeyForEncryptionAndDecry'); //32 chars
@@ -19,7 +21,11 @@ Future<String> makePostRequest(String url, String unencodedPath, Map<String, Str
     headers: header,
     body: requestBody,
   );
-  return getDecryptedString(response.body);
+  if(response.statusCode==200 && response.body.isNotEmpty) {
+    return getDecryptedString(response.body);
+  }else{
+    return response.body;
+  }
 }
 
 void showWindowDialog(String message, BuildContext context) {
@@ -79,7 +85,10 @@ Future<CoordPoint> getCoordPoint(BuildContext context) async {
   double latitude = position.latitude;
   double altitude = position.altitude;
   double speed = position.speed;
-  DateTime dateTime = position.timestamp;
+
+  var now = new DateTime.now();
+  var formatter = new DateFormat('yyyy-MM-dd H:m:s');
+  String dateTime = formatter.format(now);
 
   CoordPoint coordPoint = new CoordPoint(latitude, longitude, altitude, speed, dateTime);
   return coordPoint;
