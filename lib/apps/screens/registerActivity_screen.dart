@@ -10,18 +10,14 @@ import 'package:iot_project/apps/utilities/user_data.dart';
 import 'package:wakelock/wakelock.dart';
 
 class RegisterActivityScreen extends StatefulWidget {
+  RegisterActivityScreen({@required this.updateHomePage});
+  final Function() updateHomePage;
+
   @override
   _RegisterActivityScreenState createState() => _RegisterActivityScreenState();
 }
 
 class _RegisterActivityScreenState extends State<RegisterActivityScreen> {
-
-  final String url = "sapu.hopto.org:20080";
-  final String unencodedPath = "/iotProject/registerActivity.php";
-  final Map<String, String> header = {
-    'Content-Type': 'application/x-www-form-urlencoded'
-  };
-
   MapController _mapController = MapController();
   bool recording = false;
   Timer timer;
@@ -39,31 +35,34 @@ class _RegisterActivityScreenState extends State<RegisterActivityScreen> {
     super.dispose();
   }
 
-  Future<bool> _onWillPop() {
+  Future<bool> _onWillPop() async {
     return showDialog(
-          context: context,
-          builder: (context) => new AlertDialog(
-            title: new Text('Are you sure?'),
-            content: new Text('This will reset your current records'),
-            actions: <Widget>[
-              new TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: new Text('No'),
-              ),
-              new TextButton(
-                onPressed: () {
-                  setState(() {
-                    recording = false;
-                    UserData.liveActivity =
-                        new Activity("Latest Activity", <CoordPoint>[]);
-                  });
-                  Navigator.of(context).pop(true);
-                },
-                child: new Text('Yes'),
-              ),
-            ],
+      context: context,
+      builder: (context) =>
+      new AlertDialog(
+        title: new Text('Are you sure?'),
+        content: new Text('Unsaved records will be saved'),
+        actions: <Widget>[
+          new TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: new Text('No'),
           ),
-        );
+          new TextButton(
+            onPressed: () async {
+              UserData.activities = await getUserActivitiesSQL();
+              setState(() {
+                recording = false;
+                UserData.liveActivity =
+                new Activity("Latest Activity", <CoordPoint>[]);
+                widget.updateHomePage();
+              });
+              Navigator.of(context).pop(true);
+            },
+            child: new Text('Yes'),
+          ),
+        ],
+      ),
+    );
   }
 
   void _onUpload() {
@@ -83,8 +82,8 @@ class _RegisterActivityScreenState extends State<RegisterActivityScreen> {
                 recording = false;
                 _registerActivity();
                 UserData.liveActivity = new Activity("Latest Activity", <CoordPoint>[]);
+                Navigator.of(context).pop(true);
               });
-              Navigator.of(context).pop(true);
             },
             child: new Text('Yes'),
           ),
@@ -193,11 +192,11 @@ class _RegisterActivityScreenState extends State<RegisterActivityScreen> {
     final Map<String, String> body = {
       'activity_name': getEncryptedString(UserData.liveActivity.getName()),
       'date_time': getEncryptedString(UserData.liveActivity.getFirstPos().getDateTime()),
-      'user_id': getEncryptedString(UserData.user.getId().toString()), 
+      'user_id': getEncryptedString(UserData.user.getId().toString()),
       'coordPoints': getEncryptedString(UserData.liveActivity.getCoordPoints().toString()),
     };
     //upload activity
-    String response = await makePostRequest(url, unencodedPath, header, body);
+    String response = await makePostRequest(url, registerActivityPath, header, body);
     showWindowDialog(response, context);
   }
 

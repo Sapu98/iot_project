@@ -17,11 +17,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   final mailController = TextEditingController();
   final passwordController = TextEditingController();
-  final String url = "sapu.hopto.org:20080";
-  final String unencodedPath = "/iotProject/login.php";
-  final Map<String, String> header = {
-    'Content-Type': 'application/x-www-form-urlencoded'
-  };
 
   Widget _buildEmailTF() {
     return Column(
@@ -111,7 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
             'mail': mail,
             'password': password
           };
-          String response = await makePostRequest(url, unencodedPath, header, requestBody);
+          String response = await makePostRequest(url, loginPath, header, requestBody);
           showWindowDialog(response, context);
           //TODO: metodo per prendere i dati da cambiare...
           String username = response.substring(response.lastIndexOf("***username:")+12,response.lastIndexOf(" id:"));
@@ -226,26 +221,5 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
-  }
-  Future<List<Activity>> getUserActivitiesSQL() async{
-    final Map<String, String> body = {
-      'user_id': getEncryptedString(UserData.user.getId().toString()),
-    };
-    String result = await makePostRequest(url, "/iotProject/getActivity.php", header, body);
-
-    List<Activity> activities = [];
-
-    List<String> allRows = result.split("#");
-    allRows.removeAt(0);
-
-    for(String row in allRows) {
-      List<String> splittedRow = row.split("*");
-      String activityName = splittedRow[1];
-      int activityId = int.parse(splittedRow[0]);
-      Activity activity = new Activity(activityName, <CoordPoint>[]);
-      activity.setId(activityId);
-      activities.add(activity);
-    }
-    return activities;
   }
 }

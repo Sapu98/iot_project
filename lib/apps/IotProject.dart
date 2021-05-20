@@ -26,25 +26,6 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => new _MyHomePageState();
 }
 
-_makePostRequest() async {
-// set up POST request arguments
-  final url = Uri.parse('https://jsonplaceholder.typicode.com/posts');
-  Map<String, String> headers = {"Content-type": "application/json"};
-  String json = '{"title": "Hello", "body": "body text", "userId": 1}';
-  // make POST request
-  Response response = await post(url, headers: headers, body: json);
-  // check the status code for the result
-  int statusCode = response.statusCode;
-  // this API passes back the id of the new item added to the body
-  String body = response.body;
-  // {
-  //   "title": "Hello",
-  //   "body": "body text",
-  //   "userId": 1,
-  //   "id": 101
-  // }
-}
-
 const htmlData = """
 <h1>Title</h1>
 <iframe src='http://7d96a14659ee.ngrok.io/d-solo/e5HtikkRz/czclog?orgId=1&refresh=5m&from=1614350624345&to=1616939024345&panelId=2' width='450' height='200' frameborder='0'></iframe>

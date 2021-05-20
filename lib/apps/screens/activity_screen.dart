@@ -14,15 +14,11 @@ class ActivityScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Activity Screen')),
+      appBar: AppBar(title: Text(activity.getName())),
       body: Padding(
         padding: EdgeInsets.all(8.0),
         child: Column(
           children: [
-            Padding(
-              padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
-              child: Text(activity.getName()),
-            ),
             Flexible(
               child: Stack(
                 fit: StackFit.loose,

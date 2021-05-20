@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:iot_project/apps/utilities/constants.dart';
 import 'package:iot_project/apps/utilities/functions.dart';
+import 'package:iot_project/apps/utilities/user_data.dart';
 
 
 class RegisterScreen extends StatefulWidget {
@@ -10,11 +11,7 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  final String url = "sapu.hopto.org:20080";
-  final String unencodedPath = "/iotProject/register.php";
-  final Map<String, String> header = {
-    'Content-Type': 'application/x-www-form-urlencoded'
-  };
+
 
   final usernameController = TextEditingController();
   final mailController = TextEditingController();
@@ -146,7 +143,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             'password': password,
             'mail': mail
           };
-          String response = await makePostRequest(url, unencodedPath, header, body);
+          String response = await makePostRequest(url, registerPath, header, body);
           showWindowDialog(response, context);
         },
         padding: EdgeInsets.all(15.0),

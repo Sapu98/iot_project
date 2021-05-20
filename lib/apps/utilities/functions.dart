@@ -5,11 +5,9 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:iot_project/apps/components/activity.dart';
 import 'package:iot_project/apps/components/coordPoint.dart';
-import 'package:iot_project/apps/components/user.dart';
 import 'package:iot_project/apps/screens/homepage_screen.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:iot_project/apps/utilities/user_data.dart';
-
 
 final key = encrypt.Key.fromUtf8('MySecretKeyForEncryptionAndDecry'); //32 chars
 final iv = encrypt.IV.fromUtf8('helloworldhellow'); //16 chars
@@ -44,9 +42,7 @@ void showWindowDialog(String message, BuildContext context) {
                 if (message.contains("check your email")) {
                   Navigator.of(context).pop();
                 } else if (message.contains("Successful login")) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => HomePageScreen()),
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => HomePageScreen()),
                   );
                 }
               },
@@ -79,6 +75,29 @@ Future<Position> _determinePosition(BuildContext context) async {
   return await Geolocator.getCurrentPosition();
 }
 
+Future<List<Activity>> getUserActivitiesSQL() async{
+  final Map<String, String> body = {
+    'user_id': getEncryptedString(UserData.user.getId().toString()),
+  };
+  //TODO LA STRINGA
+  String result = await makePostRequest(url, "/iotProject/getActivity.php", header, body);
+
+  List<Activity> activities = [];
+
+  List<String> allRows = result.split("#");
+  allRows.removeAt(0);
+
+  for(String row in allRows) {
+    List<String> splittedRow = row.split("*");
+    String activityName = splittedRow[1];
+    int activityId = int.parse(splittedRow[0]);
+    Activity activity = new Activity(activityName, <CoordPoint>[]);
+    activity.setId(activityId);
+    activities.add(activity);
+  }
+  return activities;
+}
+
 Future<CoordPoint> getCoordPoint(BuildContext context) async {
   Position position = (await _determinePosition(context));
   double longitude = position.longitude;
@@ -92,11 +111,6 @@ Future<CoordPoint> getCoordPoint(BuildContext context) async {
 
   CoordPoint coordPoint = new CoordPoint(latitude, longitude, altitude, speed, dateTime);
   return coordPoint;
-}
-
-List<Activity> getActivities(User user){
-  //TODO: da fare
-
 }
 
 String getEncryptedString(String input) {
