@@ -106,7 +106,7 @@ class _ActivityRowState extends State<ActivityRow> {
       context: context,
       builder: (context) => new AlertDialog(
         title: new Text('Delete Activity?'),
-        content: new Text('This will delete this activity forever'),
+        content: new Text('This Activity will be deleted forever'),
         actions: <Widget>[
           new TextButton(
             onPressed: () => Navigator.of(context).pop(false),

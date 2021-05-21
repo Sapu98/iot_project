@@ -21,10 +21,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(
-          'Username',
-          style: kLabelStyle,
-        ),
         SizedBox(height: 10.0),
         Container(
           alignment: Alignment.centerLeft,
@@ -44,7 +40,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 Icons.person,
                 color: Colors.white,
               ),
-              hintText: 'Enter an username',
+              hintText: 'Username',
               hintStyle: kHintTextStyle,
             ),
           ),
@@ -57,10 +53,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(
-          'Email',
-          style: kLabelStyle,
-        ),
         SizedBox(height: 10.0),
         Container(
           alignment: Alignment.centerLeft,
@@ -80,7 +72,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 Icons.email,
                 color: Colors.white,
               ),
-              hintText: 'Enter an Email',
+              hintText: 'Email',
               hintStyle: kHintTextStyle,
             ),
           ),
@@ -93,10 +85,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(
-          'Password',
-          style: kLabelStyle,
-        ),
         SizedBox(height: 10.0),
         Container(
           alignment: Alignment.centerLeft,
@@ -116,7 +104,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 Icons.lock,
                 color: Colors.white,
               ),
-              hintText: 'Enter a Password',
+              hintText: 'Password',
               hintStyle: kHintTextStyle,
             ),
           ),
@@ -132,7 +120,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       child: RaisedButton(
         elevation: 5.0,
         onPressed: () async {
-          //TODO: onPress
           print('Register Button Pressed');
           String username = getEncryptedString(usernameController.text);
           String password = getEncryptedString(passwordController.text);
@@ -144,7 +131,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             'mail': mail
           };
           String response = await makePostRequest(url, registerPath, header, body);
-          showWindowDialog(response, context);
+          _showWindowDialog(response, context);
         },
         padding: EdgeInsets.all(15.0),
         shape: RoundedRectangleBorder(
@@ -214,11 +201,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       SizedBox(height: 20.0),
                       _buildUsernameTF(),
                       SizedBox(
-                        height: 20.0,
+                        height: 10.0,
                       ),
                       _buildEmailTF(),
                       SizedBox(
-                        height: 20.0,
+                        height: 10.0,
                       ),
                       _buildPasswordTF(),
                       _buildRegisterBtn(),
@@ -231,5 +218,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ),
       ),
     );
+  }
+  void _showWindowDialog(String message, BuildContext context) {
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            //Oltre al messaggio di risposta per l'utente, vengono inviati dati come id e activation code dopo "***"
+            title: Text(message),
+            actions: <Widget>[
+              TextButton(
+                child: Text('ok!'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  if (message.contains("check your email")) {
+                    Navigator.of(context).pop();
+                  }
+                },
+              )
+            ],
+          );
+        });
   }
 }

@@ -33,7 +33,7 @@ void showWindowDialog(String message, BuildContext context) {
       builder: (BuildContext context) {
         return AlertDialog(
           //Oltre al messaggio di risposta per l'utente, vengono inviati dati come id e activation code dopo "***"
-          title: Text(message.contains("***") ? message.substring(0,message.lastIndexOf("***")) : message),
+          title: Text(message),
           actions: <Widget>[
             TextButton(
               child: Text('ok!'),
@@ -41,9 +41,6 @@ void showWindowDialog(String message, BuildContext context) {
                 Navigator.of(context).pop();
                 if (message.contains("check your email")) {
                   Navigator.of(context).pop();
-                } else if (message.contains("Successful login")) {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => HomePageScreen()),
-                  );
                 }
               },
             )
@@ -80,7 +77,7 @@ Future<List<Activity>> getUserActivitiesSQL() async{
     'user_id': getEncryptedString(UserData.user.getId().toString()),
   };
   //TODO LA STRINGA
-  String result = await makePostRequest(url, "/iotProject/getActivity.php", header, body);
+  String result = await makePostRequest(url, getActivityPath, header, body);
 
   List<Activity> activities = [];
 

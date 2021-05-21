@@ -23,7 +23,7 @@ class User{
     return this._email;
   }
 
-  bool isActive(){
+  bool isActivated(){
     return this._activated;
   }
 

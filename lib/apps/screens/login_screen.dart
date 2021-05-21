@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:iot_project/apps/components/activity.dart';
-import 'package:iot_project/apps/components/coordPoint.dart';
 import 'package:iot_project/apps/components/user.dart';
 import 'package:iot_project/apps/screens/register_screen.dart';
 import 'package:iot_project/apps/utilities/constants.dart';
 import 'package:iot_project/apps/utilities/functions.dart';
 import 'package:iot_project/apps/utilities/user_data.dart';
+
+import 'homePage_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -22,10 +22,6 @@ class _LoginScreenState extends State<LoginScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(
-          'Email',
-          style: kLabelStyle,
-        ),
         SizedBox(height: 10.0),
         Container(
           alignment: Alignment.centerLeft,
@@ -45,7 +41,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 Icons.email,
                 color: Colors.white,
               ),
-              hintText: 'Enter your Email',
+              hintText: 'Email',
               hintStyle: kHintTextStyle,
             ),
           ),
@@ -58,10 +54,6 @@ class _LoginScreenState extends State<LoginScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(
-          'Password',
-          style: kLabelStyle,
-        ),
         SizedBox(height: 10.0),
         Container(
           alignment: Alignment.centerLeft,
@@ -81,7 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 Icons.lock,
                 color: Colors.white,
               ),
-              hintText: 'Enter your Password',
+              hintText: 'Password',
               hintStyle: kHintTextStyle,
             ),
           ),
@@ -97,25 +89,30 @@ class _LoginScreenState extends State<LoginScreen> {
       child: RaisedButton(
         elevation: 5.0,
         onPressed: () async {
-          //TODO: onPress
           print('Login Button Pressed');
           String password = getEncryptedString(passwordController.text);
           String mail = getEncryptedString(mailController.text);
 
-          final Map<String, String> requestBody = {
+          final Map<String, String> body = {
             'mail': mail,
             'password': password
           };
-          String response = await makePostRequest(url, loginPath, header, requestBody);
-          showWindowDialog(response, context);
+          String response = await makePostRequest(url, loginPath, header, body);
           //TODO: metodo per prendere i dati da cambiare...
-          String username = response.substring(response.lastIndexOf("***username:")+12,response.lastIndexOf(" id:"));
-          int id = int.parse(response.substring(response.lastIndexOf(" id:")+4,response.lastIndexOf(" activated:")));
-          bool activated = response.substring(response.lastIndexOf(" activated:")+11) == "true"; //in dart non esiste un modo per passare da stringa a boolean
+          if(response.contains("#")) {
+            _showWindowDialog(response, context);
+            List<String> parameters = response.split("#")[1].split("*");
+            String username = parameters[0];
+            int id = int.parse(parameters[1]);
+            bool activated = parameters[2] ==
+                "true"; //in dart non esiste un modo per passare da stringa a boolean
 
-          UserData.user = new User(id, activated, username, mail);
-          //si potrebbe fare in un'unica richiesta, passando in un formato json
-          UserData.activities = await getUserActivitiesSQL();
+            UserData.user = new User(id, activated, username, mail);
+            //si potrebbe fare in un'unica richiesta, passando in un formato json
+            UserData.activities = await getUserActivitiesSQL();
+          }else{
+            _showWindowDialog("Error: " + response, context);
+          }
         },
         padding: EdgeInsets.all(15.0),
         shape: RoundedRectangleBorder(
@@ -207,7 +204,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       SizedBox(height: 30.0),
                       _buildEmailTF(),
                       SizedBox(
-                        height: 30.0,
+                        height: 10.0,
                       ),
                       _buildPasswordTF(),
                       _buildLoginBtn(),
@@ -221,5 +218,28 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
+  }
+  void _showWindowDialog(String message, BuildContext context) {
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            //Oltre al messaggio di risposta per l'utente, vengono inviati dati come id e activation code dopo "***"
+            title: Text(message.contains("#") ? message.split("#")[0] : message),
+            actions: <Widget>[
+              TextButton(
+                child: Text('ok!'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  if (message.contains("Successful login")) {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => HomePageScreen()),
+                    );
+                  }
+                },
+              )
+            ],
+          );
+        });
   }
 }

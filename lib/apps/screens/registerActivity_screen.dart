@@ -40,7 +40,7 @@ class _RegisterActivityScreenState extends State<RegisterActivityScreen> {
       builder: (context) =>
       new AlertDialog(
         title: new Text('Are you sure?'),
-        content: new Text('Unsaved records will be lost'),
+        content: new Text('Any unsaved records will be lost'),
         actions: <Widget>[
           new TextButton(
             onPressed: () => Navigator.of(context).pop(false),

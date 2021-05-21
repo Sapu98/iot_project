@@ -13,6 +13,7 @@ final String registerPath = "/iotProject/register.php";
 final String registerActivityPath = "/iotProject/registerActivity.php";
 final String deleteActivityPath = "/iotProject/deleteActivity.php";
 final String renameActivityPath = "/iotProject/renameActivity.php";
+final String getActivityPath = "/iotProject/getActivity.php";
 
 class UserData{
   static User user;
