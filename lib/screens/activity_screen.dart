@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:iot_project/apps/components/activity.dart';
+import 'package:iot_project/components/activity.dart';
 
 class ActivityScreen extends StatelessWidget {
 

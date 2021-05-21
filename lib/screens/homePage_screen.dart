@@ -1,10 +1,10 @@
 
 import 'package:flutter/material.dart';
-import 'package:iot_project/apps/components/activity.dart';
-import 'package:iot_project/apps/components/activity_row.dart';
-import 'package:iot_project/apps/screens/registerActivity_screen.dart';
-import 'package:iot_project/apps/utilities/functions.dart';
-import 'package:iot_project/apps/utilities/user_data.dart';
+import 'package:iot_project/components/activity.dart';
+import 'package:iot_project/components/activity_row.dart';
+import 'package:iot_project/screens/registerActivity_screen.dart';
+import 'package:iot_project/utilities/functions.dart';
+import 'package:iot_project/utilities/user_data.dart';
 
 class HomePageScreen extends StatefulWidget {
   @override

@@ -3,10 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map/plugin_api.dart';
-import 'package:iot_project/apps/components/activity.dart';
-import 'package:iot_project/apps/components/coordPoint.dart';
-import 'package:iot_project/apps/utilities/functions.dart';
-import 'package:iot_project/apps/utilities/user_data.dart';
+import 'package:iot_project/components/activity.dart';
+import 'package:iot_project/components/coordPoint.dart';
+import 'package:iot_project/utilities/functions.dart';
+import 'package:iot_project/utilities/user_data.dart';
 import 'package:wakelock/wakelock.dart';
 
 class RegisterActivityScreen extends StatefulWidget {

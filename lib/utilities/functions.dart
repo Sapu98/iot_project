@@ -3,11 +3,11 @@ import 'package:encrypt/encrypt.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:iot_project/apps/components/activity.dart';
-import 'package:iot_project/apps/components/coordPoint.dart';
-import 'package:iot_project/apps/screens/homepage_screen.dart';
+import 'package:iot_project/components/activity.dart';
+import 'package:iot_project/components/coordPoint.dart';
+import 'package:iot_project/screens/homepage_screen.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:iot_project/apps/utilities/user_data.dart';
+import 'package:iot_project/utilities/user_data.dart';
 
 final key = encrypt.Key.fromUtf8('MySecretKeyForEncryptionAndDecry'); //32 chars
 final iv = encrypt.IV.fromUtf8('helloworldhellow'); //16 chars

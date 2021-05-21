@@ -1,22 +1,53 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:iot_project/apps/components/user.dart';
-import 'package:iot_project/apps/screens/register_screen.dart';
-import 'package:iot_project/apps/utilities/constants.dart';
-import 'package:iot_project/apps/utilities/functions.dart';
-import 'package:iot_project/apps/utilities/user_data.dart';
+import 'package:iot_project/utilities/constants.dart';
+import 'package:iot_project/utilities/functions.dart';
+import 'package:iot_project/utilities/user_data.dart';
 
-import 'homePage_screen.dart';
 
-class LoginScreen extends StatefulWidget {
+class RegisterScreen extends StatefulWidget {
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  _RegisterScreenState createState() => _RegisterScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _RegisterScreenState extends State<RegisterScreen> {
 
+
+  final usernameController = TextEditingController();
   final mailController = TextEditingController();
   final passwordController = TextEditingController();
+
+  Widget _buildUsernameTF() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        SizedBox(height: 10.0),
+        Container(
+          alignment: Alignment.centerLeft,
+          decoration: kBoxDecorationStyle,
+          height: 60.0,
+          child: TextField(
+            controller: usernameController,
+            keyboardType: TextInputType.emailAddress,
+            style: TextStyle(
+              color: Colors.white,
+              fontFamily: 'OpenSans',
+            ),
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.only(top: 14.0),
+              prefixIcon: Icon(
+                Icons.person,
+                color: Colors.white,
+              ),
+              hintText: 'Username',
+              hintStyle: kHintTextStyle,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 
   Widget _buildEmailTF() {
     return Column(
@@ -82,37 +113,25 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _buildLoginBtn() {
+  Widget _buildRegisterBtn() {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 25.0),
       width: double.infinity,
       child: RaisedButton(
         elevation: 5.0,
         onPressed: () async {
-          print('Login Button Pressed');
+          print('Register Button Pressed');
+          String username = getEncryptedString(usernameController.text);
           String password = getEncryptedString(passwordController.text);
           String mail = getEncryptedString(mailController.text);
 
           final Map<String, String> body = {
-            'mail': mail,
-            'password': password
+            'username': username,
+            'password': password,
+            'mail': mail
           };
-          String response = await makePostRequest(url, loginPath, header, body);
-          //TODO: metodo per prendere i dati da cambiare...
-          if(response.contains("#")) {
-            _showWindowDialog(response, context);
-            List<String> parameters = response.split("#")[1].split("*");
-            String username = parameters[0];
-            int id = int.parse(parameters[1]);
-            bool activated = parameters[2] ==
-                "true"; //in dart non esiste un modo per passare da stringa a boolean
-
-            UserData.user = new User(id, activated, username, mail);
-            //si potrebbe fare in un'unica richiesta, passando in un formato json
-            UserData.activities = await getUserActivitiesSQL();
-          }else{
-            _showWindowDialog("Error: " + response, context);
-          }
+          String response = await makePostRequest(url, registerPath, header, body);
+          _showWindowDialog(response, context);
         },
         padding: EdgeInsets.all(15.0),
         shape: RoundedRectangleBorder(
@@ -120,35 +139,13 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         color: Colors.white,
         child: Text(
-          'LOGIN',
+          'SIGN UP',
           style: TextStyle(
             color: Color(0xFF527DAA),
             letterSpacing: 1.5,
             fontSize: 18.0,
             fontWeight: FontWeight.bold,
             fontFamily: 'OpenSans',
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSignupBtn() {
-    return GestureDetector(
-      onTap: () {
-        print('Sign Up Button Pressed');
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => RegisterScreen()),
-        );
-      },
-      child: RichText(
-        text: TextSpan(
-          text: 'Sign Up',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18.0,
-            fontWeight: FontWeight.bold,
           ),
         ),
       ),
@@ -193,7 +190,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        'Sign In',
+                        'Sign Up',
                         style: TextStyle(
                           color: Colors.white,
                           fontFamily: 'OpenSans',
@@ -201,14 +198,17 @@ class _LoginScreenState extends State<LoginScreen> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(height: 30.0),
+                      SizedBox(height: 20.0),
+                      _buildUsernameTF(),
+                      SizedBox(
+                        height: 10.0,
+                      ),
                       _buildEmailTF(),
                       SizedBox(
                         height: 10.0,
                       ),
                       _buildPasswordTF(),
-                      _buildLoginBtn(),
-                      _buildSignupBtn(),
+                      _buildRegisterBtn(),
                     ],
                   ),
                 ),
@@ -226,15 +226,14 @@ class _LoginScreenState extends State<LoginScreen> {
         builder: (BuildContext context) {
           return AlertDialog(
             //Oltre al messaggio di risposta per l'utente, vengono inviati dati come id e activation code dopo "***"
-            title: Text(message.contains("#") ? message.split("#")[0] : message),
+            title: Text(message),
             actions: <Widget>[
               TextButton(
                 child: Text('ok!'),
                 onPressed: () {
                   Navigator.of(context).pop();
-                  if (message.contains("Successful login")) {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => HomePageScreen()),
-                    );
+                  if (message.contains("check your email")) {
+                    Navigator.of(context).pop();
                   }
                 },
               )

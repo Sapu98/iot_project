@@ -1,6 +1,6 @@
-import 'package:iot_project/apps/components/activity.dart';
-import 'package:iot_project/apps/components/coordPoint.dart';
-import 'package:iot_project/apps/components/user.dart';
+import 'package:iot_project/components/activity.dart';
+import 'package:iot_project/components/coordPoint.dart';
+import 'package:iot_project/components/user.dart';
 
 final String url = "sapu.hopto.org:20080";
 final Map<String, String> header = {
