@@ -1,15 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:iot_project/apps/components/activity.dart';
+import 'package:iot_project/apps/screens/activity_screen.dart';
 import 'package:iot_project/apps/utilities/functions.dart';
 import 'package:iot_project/apps/utilities/user_data.dart';
 
 import 'coordPoint.dart';
 
 class ActivityRow extends StatefulWidget {
-  ActivityRow({this.activityInstance, this.activity, @required this.updateHomePage});
+  ActivityRow({this.activity, @required this.updateHomePage});
 
-  final Widget activityInstance;
   final Activity activity;
   final Function() updateHomePage;
 
@@ -19,7 +19,6 @@ class ActivityRow extends StatefulWidget {
 
 class _ActivityRowState extends State<ActivityRow> {
   final textFieldController = TextEditingController();
-
 
   @override
   Widget build(BuildContext context) {
@@ -32,33 +31,41 @@ class _ActivityRowState extends State<ActivityRow> {
           SizedBox(width: 10),
           TextButton(
               onPressed: () async {
-                widget.activity.setCoordPoints(await getActivityCoordPointsSQL(widget.activity.getId().toString()));
-                Navigator.push(context, MaterialPageRoute(builder: (context) => widget.activityInstance),
+                widget.activity.setCoordPoints(await getActivityCoordPointsSQL(
+                    widget.activity.getId().toString()));
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => new ActivityScreen(widget.activity)),
                 );
               },
-            child: Text(widget.activity.getName(),
-              style: TextStyle(color: Colors.black))),
+              child: Text(widget.activity.getName(),
+                  style: TextStyle(color: Colors.black))),
           Expanded(child: Container()),
           SizedBox(
             width: 40,
-            child:
-            TextButton(onPressed: ()  {
-              _onDelete();
-            }, child: Icon(Icons.delete, size: 18)),
+            child: TextButton(
+                onPressed: () {
+                  _onDelete();
+                },
+                child: Icon(Icons.delete, size: 18)),
           ),
           SizedBox(
             width: 35,
-            child:
-            TextButton(onPressed: () {
-              _onEdit();
-            }, child: Icon(Icons.edit, size: 18)),
+            child: TextButton(
+                onPressed: () {
+                  _onEdit();
+                },
+                child: Icon(Icons.edit, size: 18)),
           ),
           SizedBox(
             width: 32,
             child: TextButton(
                 onPressed: () async {
-                  widget.activity.setCoordPoints(await getActivityCoordPointsSQL(widget.activity.getId().toString()));
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => widget.activityInstance),
+                  widget.activity.setCoordPoints(
+                      await getActivityCoordPointsSQL(
+                          widget.activity.getId().toString()));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => new ActivityScreen(widget.activity)),
                   );
                 },
                 child: Icon(Icons.arrow_forward_ios_outlined, size: 14)),
@@ -72,7 +79,8 @@ class _ActivityRowState extends State<ActivityRow> {
     final Map<String, String> body = {
       'activity_id': getEncryptedString(id),
     };
-    String result = await makePostRequest(url, getCoordinatesPath, header, body);
+    String result =
+        await makePostRequest(url, getCoordinatesPath, header, body);
 
     List<CoordPoint> coordPoints = [];
     List<String> allRows = result.split("#");
@@ -107,8 +115,9 @@ class _ActivityRowState extends State<ActivityRow> {
           new TextButton(
             onPressed: () async {
               setState(() {
-                for(int i=0; i<UserData.activities.length; i++){
-                  if(UserData.activities[i].getId() == widget.activity.getId()){
+                for (int i = 0; i < UserData.activities.length; i++) {
+                  if (UserData.activities[i].getId() ==
+                      widget.activity.getId()) {
                     UserData.activities.remove(UserData.activities[i]);
                   }
                 }
@@ -116,9 +125,11 @@ class _ActivityRowState extends State<ActivityRow> {
                 widget.updateHomePage();
               });
               final Map<String, String> body = {
-                'activity_id': getEncryptedString(widget.activity.getId().toString()),
+                'activity_id':
+                    getEncryptedString(widget.activity.getId().toString()),
               };
-              String result = await makePostRequest(url, deleteActivityPath, header, body);
+              String result =
+                  await makePostRequest(url, deleteActivityPath, header, body);
               print(result);
               Navigator.of(context).pop(true);
             },
@@ -128,6 +139,7 @@ class _ActivityRowState extends State<ActivityRow> {
       ),
     );
   }
+
   void _onEdit() {
     showDialog(
       context: context,
@@ -143,21 +155,26 @@ class _ActivityRowState extends State<ActivityRow> {
         actions: <Widget>[
           new TextButton(
             onPressed: () async {
-              setState(() {
-                for(int i=0; i<UserData.activities.length; i++){
-                  if(UserData.activities[i].getId() == widget.activity.getId()){
-                    UserData.activities[i].setName(textFieldController.text);
+              if (textFieldController.text.length > 3) {
+                setState(() {
+                  for (int i = 0; i < UserData.activities.length; i++) {
+                    if (UserData.activities[i].getId() ==
+                        widget.activity.getId()) {
+                      UserData.activities[i].setName(textFieldController.text);
+                    }
                   }
-                }
-                //aggiorna lo stato del parent (senno la row rimarrebbe)
-                widget.updateHomePage();
-              });
-              final Map<String, String> body = {
-                'activity_id': getEncryptedString(widget.activity.getId().toString()),
-                'new_name': getEncryptedString(textFieldController.text),
-              };
-              String result = await makePostRequest(url, renameActivityPath, header, body);
-              print(result);
+                  //aggiorna lo stato del parent (senno la row rimarrebbe)
+                  widget.updateHomePage();
+                });
+                final Map<String, String> body = {
+                  'activity_id':
+                      getEncryptedString(widget.activity.getId().toString()),
+                  'new_name': getEncryptedString(textFieldController.text),
+                };
+                String result = await makePostRequest(
+                    url, renameActivityPath, header, body);
+                print(result);
+              }
               Navigator.of(context).pop(true);
             },
             child: new Text('ok'),

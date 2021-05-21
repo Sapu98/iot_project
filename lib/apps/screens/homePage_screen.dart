@@ -5,8 +5,6 @@ import 'package:iot_project/apps/components/activity_row.dart';
 import 'package:iot_project/apps/screens/registerActivity_screen.dart';
 import 'package:iot_project/apps/utilities/user_data.dart';
 
-import 'activity_screen.dart';
-
 class HomePageScreen extends StatefulWidget {
   @override
   _HomePageScreenState createState() => _HomePageScreenState();
@@ -27,7 +25,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
           for(Activity activity in UserData.activities)
             Column(children:[
               SizedBox(height: 2,),
-              ActivityRow(activity: activity, activityInstance: ActivityScreen(activity), updateHomePage: refresh),
+              ActivityRow(activity: activity, updateHomePage: refresh),
             ]
             )
         ],

@@ -25,8 +25,7 @@ class _RegisterActivityScreenState extends State<RegisterActivityScreen> {
   @override
   void initState() {
     super.initState();
-    timer = Timer.periodic(
-        Duration(seconds: 5), (Timer t) => addCurrentCoordPointToMap());
+    timer = Timer.periodic(Duration(seconds: 5), (Timer t) => addCurrentCoordPointToMap());
   }
 
   @override
@@ -41,7 +40,7 @@ class _RegisterActivityScreenState extends State<RegisterActivityScreen> {
       builder: (context) =>
       new AlertDialog(
         title: new Text('Are you sure?'),
-        content: new Text('Unsaved records will be saved'),
+        content: new Text('Unsaved records will be lost'),
         actions: <Widget>[
           new TextButton(
             onPressed: () => Navigator.of(context).pop(false),
@@ -51,9 +50,6 @@ class _RegisterActivityScreenState extends State<RegisterActivityScreen> {
             onPressed: () async {
               UserData.activities = await getUserActivitiesSQL();
               setState(() {
-                recording = false;
-                UserData.liveActivity =
-                new Activity("Latest Activity", <CoordPoint>[]);
                 widget.updateHomePage();
               });
               Navigator.of(context).pop(true);
@@ -81,7 +77,7 @@ class _RegisterActivityScreenState extends State<RegisterActivityScreen> {
               setState(() {
                 recording = false;
                 _registerActivity();
-                UserData.liveActivity = new Activity("Latest Activity", <CoordPoint>[]);
+                _resetLiveActivity();
                 Navigator.of(context).pop(true);
               });
             },
@@ -207,6 +203,10 @@ class _RegisterActivityScreenState extends State<RegisterActivityScreen> {
         UserData.liveActivity.addPoint(point);
       });
     }
+  }
+  void _resetLiveActivity(){
+    recording = false;
+    UserData.liveActivity = new Activity("Latest Activity", <CoordPoint>[]);
   }
 
   void focusCurrentPosition() {
