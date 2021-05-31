@@ -24,7 +24,7 @@ class _ActivityRowState extends State<ActivityRow> {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(10),
-      color: Colors.grey.shade300,
+      color: Color.fromARGB(255, 224, 224, 224),
       child: Row(
         children: [
           Icon(Icons.account_tree_outlined, size: 14),

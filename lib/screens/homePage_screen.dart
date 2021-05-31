@@ -16,7 +16,10 @@ class _HomePageScreenState extends State<HomePageScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color.fromARGB(255, 30, 52, 76),
       appBar: AppBar(
+        backgroundColor: Color.fromARGB(255, 70, 122, 177),
+        shadowColor: Colors.white54,
         centerTitle: true,
         title: Text("Welcome, " + UserData.user.getUsername()),
       ),

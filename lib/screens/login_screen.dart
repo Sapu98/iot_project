@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:iot_project/components/user.dart';
 import 'package:iot_project/screens/register_screen.dart';
-import 'package:iot_project/utilities/constants.dart';
 import 'package:iot_project/utilities/functions.dart';
 import 'package:iot_project/utilities/user_data.dart';
 
@@ -25,7 +24,17 @@ class _LoginScreenState extends State<LoginScreen> {
         SizedBox(height: 10.0),
         Container(
           alignment: Alignment.centerLeft,
-          decoration: kBoxDecorationStyle,
+          decoration: BoxDecoration(
+            color: Color(0xFF2E5A90),
+            borderRadius: BorderRadius.circular(10.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.white24,
+                blurRadius: 6.0,
+                offset: Offset(0, 2),
+              ),
+            ],
+          ),
           height: 60.0,
           child: TextField(
             controller: mailController,
@@ -42,7 +51,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 color: Colors.white,
               ),
               hintText: 'Email',
-              hintStyle: kHintTextStyle,
+              hintStyle: TextStyle(
+                color: Colors.white54,
+                fontFamily: 'OpenSans',
+              ),
             ),
           ),
         ),
@@ -50,14 +62,24 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _buildPasswordTF() {
+  Widget _pwdWidget() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         SizedBox(height: 10.0),
         Container(
           alignment: Alignment.centerLeft,
-          decoration: kBoxDecorationStyle,
+          decoration: BoxDecoration(
+            color: Color(0xFF2E5A90),
+            borderRadius: BorderRadius.circular(10.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.white24,
+                blurRadius: 6.0,
+                offset: Offset(0, 2),
+              ),
+            ],
+          ),
           height: 60.0,
           child: TextField(
             controller: passwordController,
@@ -74,7 +96,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 color: Colors.white,
               ),
               hintText: 'Password',
-              hintStyle: kHintTextStyle,
+              hintStyle: TextStyle(
+                color: Colors.white54,
+                fontFamily: 'OpenSans',
+              ),
             ),
           ),
         ),
@@ -82,7 +107,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _buildLoginBtn() {
+  Widget _loginBtn() {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 25.0),
       width: double.infinity,
@@ -90,28 +115,30 @@ class _LoginScreenState extends State<LoginScreen> {
         elevation: 5.0,
         onPressed: () async {
           print('Login Button Pressed');
-          String password = getEncryptedString(passwordController.text);
-          String mail = getEncryptedString(mailController.text);
+          if(passwordController.text.isNotEmpty && mailController.text.isNotEmpty) {
+            String password = getEncryptedString(passwordController.text);
+            String mail = getEncryptedString(mailController.text);
 
-          final Map<String, String> body = {
-            'mail': mail,
-            'password': password
-          };
-          String response = await makePostRequest(url, loginPath, header, body);
-          //TODO: metodo per prendere i dati da cambiare...
-          if(response.contains("#")) {
-            _showWindowDialog(response, context);
-            List<String> parameters = response.split("#")[1].split("*");
-            String username = parameters[0];
-            int id = int.parse(parameters[1]);
-            bool activated = parameters[2] ==
-                "true"; //in dart non esiste un modo per passare da stringa a boolean
+            final Map<String, String> body = {
+              'mail': mail,
+              'password': password
+            };
+            String response = await makePostRequest(
+                url, loginPath, header, body);
+            if (response.contains("#")) {
+              _showWindowDialog(response, context);
+              List<String> parameters = response.split("#")[1].split("*");
+              String username = parameters[0];
+              int id = int.parse(parameters[1]);
+              bool activated = parameters[2] ==
+                  "true"; //in dart non esiste un modo per passare da stringa a boolean...
 
-            UserData.user = new User(id, activated, username, mail);
-            //si potrebbe fare in un'unica richiesta, passando in un formato json
-            UserData.activities = await getUserActivitiesSQL();
-          }else{
-            _showWindowDialog("Error: " + response, context);
+              UserData.user = new User(id, activated, username, mail);
+              //si potrebbe fare in un'unica richiesta, passando ad un formato json
+              UserData.activities = await getUserActivitiesSQL();
+            } else {
+              _showWindowDialog("Error: " + response, context);
+            }
           }
         },
         padding: EdgeInsets.all(15.0),
@@ -122,7 +149,7 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Text(
           'LOGIN',
           style: TextStyle(
-            color: Color(0xFF527DAA),
+            color: Color(0xFF354D63),
             letterSpacing: 1.5,
             fontSize: 18.0,
             fontWeight: FontWeight.bold,
@@ -133,7 +160,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _buildSignupBtn() {
+  Widget _signInBtn() {
     return GestureDetector(
       onTap: () {
         print('Sign Up Button Pressed');
@@ -168,17 +195,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 height: double.infinity,
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Color(0xFF73AEF5),
-                      Color(0xFF61A4F1),
-                      Color(0xFF478DE0),
-                      Color(0xFF398AE5),
-                    ],
-                    stops: [0.1, 0.4, 0.7, 0.9],
-                  ),
+                  color: Color.fromARGB(255, 18, 32, 47)
                 ),
               ),
               Container(
@@ -206,9 +223,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       SizedBox(
                         height: 10.0,
                       ),
-                      _buildPasswordTF(),
-                      _buildLoginBtn(),
-                      _buildSignupBtn(),
+                      _pwdWidget(),
+                      _loginBtn(),
+                      _signInBtn(),
                     ],
                   ),
                 ),

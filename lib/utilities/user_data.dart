@@ -19,4 +19,6 @@ class UserData{
   static User user;
   static List<Activity> activities;
   static Activity liveActivity = new Activity("Latest Activity", <CoordPoint>[]);
+  static Activity graphedActivity;
+
 }

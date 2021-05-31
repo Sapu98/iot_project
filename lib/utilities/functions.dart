@@ -5,7 +5,6 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:iot_project/components/activity.dart';
 import 'package:iot_project/components/coordPoint.dart';
-import 'package:iot_project/screens/homepage_screen.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:iot_project/utilities/user_data.dart';
 

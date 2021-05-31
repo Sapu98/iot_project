@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:iot_project/utilities/constants.dart';
 import 'package:iot_project/utilities/functions.dart';
 import 'package:iot_project/utilities/user_data.dart';
 
@@ -24,7 +23,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
         SizedBox(height: 10.0),
         Container(
           alignment: Alignment.centerLeft,
-          decoration: kBoxDecorationStyle,
+          decoration: BoxDecoration(
+            color: Color(0xFF2E5A90),
+            borderRadius: BorderRadius.circular(10.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.white24,
+                blurRadius: 6.0,
+                offset: Offset(0, 2),
+              ),
+            ],
+          ),
           height: 60.0,
           child: TextField(
             controller: usernameController,
@@ -41,7 +50,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 color: Colors.white,
               ),
               hintText: 'Username',
-              hintStyle: kHintTextStyle,
+              hintStyle: TextStyle(
+                color: Colors.white54,
+                fontFamily: 'OpenSans',
+              ),
             ),
           ),
         ),
@@ -56,7 +68,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
         SizedBox(height: 10.0),
         Container(
           alignment: Alignment.centerLeft,
-          decoration: kBoxDecorationStyle,
+          decoration: BoxDecoration(
+            color: Color(0xFF2E5A90),
+            borderRadius: BorderRadius.circular(10.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.white24,
+                blurRadius: 6.0,
+                offset: Offset(0, 2),
+              ),
+            ],
+          ),
           height: 60.0,
           child: TextField(
             controller: mailController,
@@ -73,7 +95,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 color: Colors.white,
               ),
               hintText: 'Email',
-              hintStyle: kHintTextStyle,
+              hintStyle: TextStyle(
+                color: Colors.white54,
+                fontFamily: 'OpenSans',
+              ),
             ),
           ),
         ),
@@ -88,7 +113,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
         SizedBox(height: 10.0),
         Container(
           alignment: Alignment.centerLeft,
-          decoration: kBoxDecorationStyle,
+          decoration: BoxDecoration(
+            color: Color(0xFF2E5A90),
+            borderRadius: BorderRadius.circular(10.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.white24,
+                blurRadius: 6.0,
+                offset: Offset(0, 2),
+              ),
+            ],
+          ),
           height: 60.0,
           child: TextField(
             controller: passwordController,
@@ -105,7 +140,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 color: Colors.white,
               ),
               hintText: 'Password',
-              hintStyle: kHintTextStyle,
+              hintStyle: TextStyle(
+                color: Colors.white54,
+                fontFamily: 'OpenSans',
+              ),
             ),
           ),
         ),
@@ -121,17 +159,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
         elevation: 5.0,
         onPressed: () async {
           print('Register Button Pressed');
-          String username = getEncryptedString(usernameController.text);
-          String password = getEncryptedString(passwordController.text);
-          String mail = getEncryptedString(mailController.text);
+          if (usernameController.text.isNotEmpty &&
+              passwordController.text.isNotEmpty &&
+              mailController.text.isNotEmpty) {
+            String username = getEncryptedString(usernameController.text);
+            String password = getEncryptedString(passwordController.text);
+            String mail = getEncryptedString(mailController.text);
 
-          final Map<String, String> body = {
-            'username': username,
-            'password': password,
-            'mail': mail
-          };
-          String response = await makePostRequest(url, registerPath, header, body);
-          _showWindowDialog(response, context);
+            final Map<String, String> body = {
+              'username': username,
+              'password': password,
+              'mail': mail
+            };
+            String response = await makePostRequest(
+                url, registerPath, header, body);
+            _showWindowDialog(response, context);
+          }
         },
         padding: EdgeInsets.all(15.0),
         shape: RoundedRectangleBorder(
@@ -164,19 +207,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               Container(
                 height: double.infinity,
                 width: double.infinity,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Color(0xFF73AEF5),
-                      Color(0xFF61A4F1),
-                      Color(0xFF478DE0),
-                      Color(0xFF398AE5),
-                    ],
-                    stops: [0.1, 0.4, 0.7, 0.9],
-                  ),
-                ),
+                color: Color.fromARGB(255, 18, 32, 47),
               ),
               Container(
                 height: double.infinity,

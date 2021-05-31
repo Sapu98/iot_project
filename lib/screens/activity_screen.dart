@@ -14,7 +14,10 @@ class ActivityScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(activity.getName())),
+      appBar: AppBar(
+          backgroundColor: Color.fromARGB(255, 70, 122, 177),
+          shadowColor: Colors.white54,
+          title: Text(activity.getName())),
       body: Padding(
         padding: EdgeInsets.all(8.0),
         child: Column(
@@ -54,8 +57,9 @@ class ActivityScreen extends StatelessWidget {
                         heroTag: null,
                         onPressed: () {
                           focusCurrentPosition();
+                          //Navigator.push(context, MaterialPageRoute(builder: (context) => new graphs_screen(activity: activity)));
                         },
-                        child: Icon(Icons.gps_fixed),
+                        child: Icon(Icons.center_focus_strong_outlined),
                       ),
                     ),
                   ),

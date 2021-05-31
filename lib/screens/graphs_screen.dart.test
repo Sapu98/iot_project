@@ -1,0 +1,112 @@
+
+import 'dart:ui';
+
+import 'package:draw_graph/draw_graph.dart';
+import 'package:draw_graph/models/feature.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:iot_project/components/activity.dart';
+import 'package:iot_project/components/coordPoint.dart';
+import 'package:iot_project/utilities/user_data.dart';
+
+final Color darkBlue = Color.fromARGB(255, 18, 32, 47);
+
+class graphs_screen extends StatefulWidget {
+  graphs_screen({@required this.activity});
+
+  final Activity activity;
+  @override
+  State<graphs_screen> createState() => _graphs_screen();
+}
+
+class _graphs_screen extends State<graphs_screen>{
+  @override
+  Widget build(BuildContext context) {
+    UserData.graphedActivity = widget.activity;
+
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData.dark().copyWith(scaffoldBackgroundColor: darkBlue),
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text(widget.activity.getName() + widget.activity.getId().toString() + " Graph"),
+        ),
+        body: MyScreen(),
+      ),
+    );
+  }
+}
+
+List<double> getSpeedList(Activity activity){
+  List<double> speeds = [];
+  List<CoordPoint> coordPoints = activity.getCoordPoints();
+  double maxVal = 0;
+
+  for(int i=0; i<coordPoints.length; i++){
+    speeds.add(coordPoints[i].getSpeed());
+    if(i==0){
+      maxVal = coordPoints[i].getSpeed();
+    }else if (coordPoints[i].getSpeed() > speeds[i - 1]) {
+        maxVal = coordPoints[i].getSpeed();
+    }
+  }
+  for(int i=0; i<speeds.length; i++){
+    speeds[i] = speeds[i]/maxVal;
+  }
+  return speeds;
+}
+double getMaxSpeed(Activity activity){
+  List<CoordPoint> coordPoints = activity.getCoordPoints();
+  double maxVal = 0;
+
+  for(int i=0; i<coordPoints.length; i++){
+    if(i==0){
+      maxVal = coordPoints[i].getSpeed();
+    }else if (coordPoints[i].getSpeed() > coordPoints[i-1].getSpeed()) {
+      maxVal = coordPoints[i].getSpeed();
+    }
+  }
+  return maxVal;
+}
+
+class MyScreen extends StatelessWidget {
+
+    final List<Feature> features = [
+      Feature(title: "Speed",
+        color: Colors.blue,
+        data: getSpeedList(UserData.graphedActivity),
+      ),
+  ];
+
+    @override
+    Widget build(BuildContext context) {
+        return Column(mainAxisAlignment: MainAxisAlignment.spaceAround, crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
+        Container(),
+          Padding(padding: const EdgeInsets.symmetric(vertical: 64.0),
+        child: Text(
+                "Altitude & Speed",
+                style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 2,
+            ),
+          ),
+        ),
+        LineGraph(
+                features: features,
+                size: Size(320, 400),
+                labelX: ['', '', '', '', '','', '', '', '', '','', '', '', '', ''],
+        labelY: [getMaxSpeed(UserData.graphedActivity).toString().substring(0,2), '0',],
+        showDescription: true,
+                graphColor: Colors.white30,
+                graphOpacity: 0.2,
+                verticalFeatureDirection: true,
+                descriptionHeight: 130,
+        ),
+        SizedBox(
+                height: 50,
+        )
+      ],
+    );
+    }
+}

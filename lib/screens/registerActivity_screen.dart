@@ -52,6 +52,7 @@ class _RegisterActivityScreenState extends State<RegisterActivityScreen> {
               setState(() {
                 widget.updateHomePage();
               });
+              _resetLiveActivity();
               Navigator.of(context).pop(true);
             },
             child: new Text('Yes'),
@@ -95,6 +96,8 @@ class _RegisterActivityScreenState extends State<RegisterActivityScreen> {
         onWillPop: _onWillPop,
         child: Scaffold(
           appBar: AppBar(
+            backgroundColor: Color.fromARGB(255, 70, 122, 177),
+            shadowColor: Colors.white54,
             centerTitle: true,
             title: Text("Register Activity"),
           ),
@@ -152,7 +155,7 @@ class _RegisterActivityScreenState extends State<RegisterActivityScreen> {
                             onPressed: () {
                               focusCurrentPosition();
                             },
-                            child: Icon(Icons.gps_fixed),
+                            child: Icon(Icons.center_focus_strong_outlined),
                           ),
                         ),
                       ),
@@ -199,11 +202,15 @@ class _RegisterActivityScreenState extends State<RegisterActivityScreen> {
   void addCurrentCoordPointToMap() async {
     if (recording) {
       CoordPoint point = await getCoordPoint(context);
-      setState(() {
-        UserData.liveActivity.addPoint(point);
-      });
+      //controllo che il gps non sia in un punto fisso
+      if ((point.getLatitude() - UserData.liveActivity.getLastPos().getLatitude()).abs() > 0.0001 || (point.getLongitude() - UserData.liveActivity.getLastPos().getLongitude()).abs() > 0.0001) {
+        setState(() {
+          UserData.liveActivity.addPoint(point);
+        });
+      }
     }
   }
+
   void _resetLiveActivity(){
     recording = false;
     UserData.liveActivity = new Activity("Latest Activity", <CoordPoint>[]);
