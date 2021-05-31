@@ -31,7 +31,6 @@ void showWindowDialog(String message, BuildContext context) {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          //Oltre al messaggio di risposta per l'utente, vengono inviati dati come id e activation code dopo "***"
           title: Text(message),
           actions: <Widget>[
             TextButton(

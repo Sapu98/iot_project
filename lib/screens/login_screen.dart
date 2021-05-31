@@ -242,7 +242,7 @@ class _LoginScreenState extends State<LoginScreen> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            //Oltre al messaggio di risposta per l'utente, vengono inviati dati come id e activation code dopo "***"
+            //Oltre al messaggio di risposta per l'utente, vengono inviati dati
             title: Text(message.contains("#") ? message.split("#")[0] : message),
             actions: <Widget>[
               TextButton(
